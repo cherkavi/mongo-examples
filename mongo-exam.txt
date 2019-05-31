@@ -1,0 +1,64 @@
+mongorestore --db enron --collection messages dump/enron/messages.bson
+----------------------------------------------------------------------------------------------
+
+db.messages.aggregate( [  
+{$project:{"headers.To":1, "headers.From":1}}, 
+{$unwind:"$headers.To"},
+{$group: { "_id":{"_id":"$_id", "from":"$headers.From"}, "to":{$addToSet:"$headers.To"} }  },
+{$unwind:"$to"},
+{$project:{"_id":"$_id._id", "from":"$_id.from", "to":"$to"}}, 
+{$group: { "_id":{"to":"$to", "from":"$from"}, "count":{$sum:1} }  },
+{$sort:{"count":-1}}
+ ] )
+
+----------------------------------------------------------------------------------------------
+db.messages.find({"headers.Message-ID":"<8147308.1075851042335.JavaMail.evans@thyme>", "headers.To": "mrpotatohead@mongodb.com"})
+
+db.messages.aggregate([ {$match:{"headers.Message-ID":"<8147308.1075851042335.JavaMail.evans@thyme>"}}, {$project:{"_id":1, "headers.To":1}}  ])
+
+db.messages.aggregate([ 
+	{$match:{"headers.Message-ID":"<8147308.1075851042335.JavaMail.evans@thyme>"}}, 
+	{$project:{"_id":1, "headers.To":1}}, 
+	{$unwind:"$headers.To"},  
+	{$group:{"_id":null, count:{$sum:1} }},  
+])
+
+db.messages.update({"headers.Message-ID":"<8147308.1075851042335.JavaMail.evans@thyme>"}, {$push:{ "headers.To": "mrpotatohead@mongodb.com" }} )
+
+---------------------------------------------------------------------------------------------
+./mongoimport -d blog -c posts < posts.json
+
+----------------------------------------------------------------------------------------------
+./mongoimport --db photo-albums --collection albums --file albums.json
+./mongoimport --db photo-albums --collection images --file images.json
+
+> db.images.find({"tags":"sunrises"}).count()
+49887
+
+> db.albums.find({"images":99987})
+0
+
+> db.albums.find({"images":99988})
+1
+
+
+        MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://localhost"));
+        MongoDatabase photAlbumDatabase = mongoClient.getDatabase("photo-albums");
+        MongoCollection<Document> albumsCollection=photAlbumDatabase.getCollection("albums");
+        MongoCollection<Document> imagesCollection=photAlbumDatabase.getCollection("images");
+
+        imagesCollection.dele;
+        
+        MongoCursor<Document> imageCursor=imagesCollection.find().iterator();
+        while(imageCursor.hasNext()){
+        	Document image=imageCursor.next();
+        	Integer imageId=image.getInteger("_id");
+        	Document atLeastOne=albumsCollection.find(new Document("images", imageId)).first();
+        	if(atLeastOne==null){
+        		imagesCollection.deleteOne(new Document("_id",imageId));
+        		System.out.println(imageId);
+        	}
+        }
+        
+        mongoClient.close();
+-----------------------------------------------------------

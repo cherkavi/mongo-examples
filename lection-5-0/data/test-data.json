@@ -1,0 +1,7 @@
+{ "name" : "MacBook Pro", "category" : "computer", "manufacturer" : "Apple", "price":1500 }
+{ "name" : "MacBook retina", "category" : "computer", "manufacturer" : "Apple", "price":1200 }
+{ "name" : "ThinkPad x230", "category" : "computer", "manufacturer" : "IBM", "price":500 }
+{ "name" : "Lenovo A1", "category" : "phone", "manufacturer" : "IBM", "price":200 }
+{ "name" : "Note 3", "category" : "phone", "manufacturer" : "Samsung", "price":300 }
+{ "name" : "Tab4", "category" : "tablet", "manufacturer" : "Samsung", "price":200 }
+

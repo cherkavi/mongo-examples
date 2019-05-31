@@ -1,0 +1,11 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>example of freemarker</title>
+</head>
+<body>
+    <hr />
+        <b>${message}</b>
+    <hr />
+</body>
+</html>
